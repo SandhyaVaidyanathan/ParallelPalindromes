@@ -7,6 +7,7 @@
 #include <sys/ipc.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include "shm.h"
 #define PERM (S_IWUSR | S_IRUSR| S_IRGRP | S_IROTH)
@@ -16,30 +17,67 @@ int main(int argc, char const *argv[])
 {
 
 	key_t key;
-	char* file;
-	file = "Input.txt";
+	char* infile;
+	infile = "Input.txt";
 	int shmid;
 	sharedInfo *shinfo;
-	pid_t childpid;
+	pid_t childpid[4];
 
-	char mylist_orig[4][100] = { "hellloweowoe",
+	char* mylist_orig[4] = { "hellloweowoe",
 						"jsdfhn",
 						"dfjnhdkjfnhdf",
 						"sfhgdj"};
+	char strFromFile[100][100];
+	int itr=0;
+	int totalStr = 0;
+	char words[100][100];
+
+
+void isPalindrome(char str[])
+{
+    // Start from leftmost and rightmost corners of str
+    int first = 0;
+    int last = strlen(str) - 1;
+ 
+    // Keep comparing characters while they are same
+    while (last > first)
+    {
+        if (str[first++] != str[last--])
+        {
+            printf("%s is Not Palindrome \n", str);
+            return;
+        }
+    }
+    printf("%s is palindrome\n", str);
+}
+// read strings from file
+FILE *fp = fopen(infile, "r");
+    if(fp==NULL)
+        perror("File does not exist");
+    else
+    {
+    
+    	while(fgets(strFromFile[itr], 100, fp))
+    	{
+        //remove \n from gets
+        strFromFile[itr][strlen(strFromFile[itr]) - 1] = '\0';
+        itr++;
+    	}
+        totalStr = itr;
+
+    for(itr = 0; itr < totalStr; itr++)
+    {
+        printf("%s\n", strFromFile[itr]);
+       // strcpy(words[itr],strFromFile[itr]);
+        isPalindrome(strFromFile[itr]);
+         	
+    }
+    }
+
+
 
 	//Generate key (Ref Ex15.1)
-
-
-
-
-	// read strings from file
-
-
-
-
-
-
-	if ((key = ftok(file,'c')) == (key_t)-1)	{
+	if ((key = ftok(infile,'r')) == (key_t)-1)	{
 		perror("Failed to derive key");
 
 		exit(1);
@@ -48,7 +86,7 @@ int main(int argc, char const *argv[])
 		printf("The generated key is: %d\n",key);
 
 	//Create shared memory segment (Ref 15.6)
-	shmid = shmget(key, sizeof(shinfo), PERM |IPC_CREAT |IPC_EXCL);
+	shmid = shmget(key, 100*sizeof(shinfo), PERM |IPC_CREAT |IPC_EXCL);
 	if ((shmid == -1) && (errno != EEXIST)) /* real error */
 	{
 		perror("Unable to create shared memory");
@@ -72,37 +110,40 @@ int main(int argc, char const *argv[])
 		shinfo->flag[5]=4;
 		for (i = 0; i < 4; ++i)
 		{
-			shinfo->mylist[i] = &mylist_orig[i];
-			printf("%s\n" , shinfo-> mylist[i]);
-			printf("%x\n" , &shinfo-> mylist[i]);
+			//shinfo->mylist[i] = mylist_orig[i];
+		shinfo->mylist[i] = strFromFile[i];
+			printf("main add %x\n" , shinfo-> mylist[i]);
+			printf("main %s\n" , shinfo-> mylist[i]);
 		}
 	}
 
 
-	//Fork child processd);
+	//Fork child process
+	char *arg1, *arg2;
+	arg1 = (char*)malloc(40);
+	arg2 = (char*)malloc(40);
 
 	int i;
 	for (i = 1; i < 4; i++)
         {
-     
-        	if((childpid = fork())<=0)
+        	if((childpid[i-1] = fork())<=0)
         		break;
         }
+        if (childpid[i-1]==-1)
+        {
+          	printf("Failed to fork:%d",i);
+             	return 1;
+        }
+        if (childpid[i-1]==0)
+        {
+        	//Do execl/execvp using 3.4,3.6
+  
+        	sprintf(arg1, "%d", fp);
+			sprintf(arg2, "%d", i);
+        	execl("palin", arg1-'0', arg2-'0', NULL);
 
-                if (childpid==-1)
-                {
-                	printf("Failed to fork:%d",i);
-                	return 1;
-
-                }
-   
-                if (childpid==0)
-                {
-                	//Do execl/execvp using 3.4,3.6
-                }
-                printf("process started \n");
-
-
-
+        }
+        printf("process started \n");
+        wait(NULL);
 	return 0;
 }

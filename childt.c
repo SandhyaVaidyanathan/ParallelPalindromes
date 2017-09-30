@@ -22,16 +22,16 @@ int main(int argc, char const *argv[])
 	sharedInfo *shinfo;
 	pid_t childpid;
 	//Generate key (Ref Ex15.1)
-	if ((key = ftok(file,'c')) == (key_t)-1)	{
+	if ((key = ftok(file,'r')) == (key_t)-1)	{
 		perror("Failed to derive key");
 
 		exit(1);
 	}
 	else
 		printf("The generated key is: %d\n",key);
-	key = 1663156943;
+	key = 1914778636;
 	//Create shared memory segment (Ref 15.6)
-	shmid = shmget(key, sizeof(shinfo), PERM | IPC_EXCL);
+	shmid = shmget(key, 100*sizeof(shinfo), PERM | IPC_EXCL);
 	if ((shmid == -1) && (errno != EEXIST)) /* real error */
 	{
 		perror("Unable to read shared memory");
@@ -47,13 +47,15 @@ int main(int argc, char const *argv[])
 		shinfo = (sharedInfo*)shmat(shmid,NULL,0);
 		if (shinfo == (void*)-1)
 			return -1;
-		for (i = 0; i < 19; ++i)
+		for (i = 0; i < 19; i++)
 		{
 			printf("flag[%d] = %d\t\n", i, shinfo->flag[i]);
 		}
-		for ( i = 0; i < 4; ++i)
+		for ( i = 0; i < 4; i++)
 		{
-			printf("%x\n" , &shinfo->mylist[i]);
+			printf("%x\n" , shinfo->mylist[i]);
+			printf("%s\n" , shinfo->mylist[i]);
+
 		}
 		// do plaindrome and write to file
 	}
