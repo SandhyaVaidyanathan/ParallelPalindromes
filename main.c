@@ -19,6 +19,11 @@ int main(int argc, char const *argv[])
 	key_t key;
 	char* infile;
 	infile = "Input.txt";
+	char* palinfile;
+	palinfile = "palin.out";
+	char* nopalinfile;
+	nopalinfile = "nopalin.out";
+	FILE *fpalin, *fnopalin;
 	int shmid;
 	sharedInfo *shinfo;
 	pid_t childpid[4];
@@ -33,6 +38,41 @@ int main(int argc, char const *argv[])
 	char words[100][100];
 
 
+
+void printPalin( char* palinFilemane, char stringP[])
+{
+            fpalin = fopen(palinFilemane,"a");
+        // If file opened successfully, then write the string to file
+   			if ( fpalin )
+   			{
+	   			fputs(stringP,fpalin);
+	   			fputs("\n",fpalin);
+    		}
+   			else
+      		{
+         	printf("Failed to open the file\n");
+        	}
+   			fclose(fpalin);
+}
+
+void printNonPalin( char* nopalinFilename, char stringN[])
+{
+           fnopalin = fopen(nopalinFilename,"a");
+               // If file opened successfully, then write the string to file
+   			if ( fnopalin )
+   			{
+	   			fputs(stringN,fnopalin);
+	   			fputs("\n",fnopalin);
+	   			
+    		}
+   			else
+      		{
+         	printf("Failed to open the file\n");
+        	}
+			//Close the file
+   			fclose(fnopalin);
+}
+
 void isPalindrome(char str[])
 {
     // Start from leftmost and rightmost corners of str
@@ -45,10 +85,15 @@ void isPalindrome(char str[])
         if (str[first++] != str[last--])
         {
             printf("%s is Not Palindrome \n", str);
+            printPalin(nopalinfile,str);
+
+
             return;
         }
     }
     printf("%s is palindrome\n", str);
+    printNonPalin(palinfile, str);
+
 }
 // read strings from file
 FILE *fp = fopen(infile, "r");
@@ -68,13 +113,9 @@ FILE *fp = fopen(infile, "r");
     for(itr = 0; itr < totalStr; itr++)
     {
         printf("%s\n", strFromFile[itr]);
-       // strcpy(words[itr],strFromFile[itr]);
-        isPalindrome(strFromFile[itr]);
-         	
+        isPalindrome(strFromFile[itr]);      	
     }
     }
-
-
 
 	//Generate key (Ref Ex15.1)
 	if ((key = ftok(infile,'r')) == (key_t)-1)	{
@@ -112,8 +153,8 @@ FILE *fp = fopen(infile, "r");
 		{
 			//shinfo->mylist[i] = mylist_orig[i];
 		shinfo->mylist[i] = strFromFile[i];
-			printf("main add %x\n" , shinfo-> mylist[i]);
-			printf("main %s\n" , shinfo-> mylist[i]);
+			printf(" %x\n" , shinfo-> mylist[i]);
+			printf(" %s\n" , shinfo-> mylist[i]);
 		}
 	}
 
@@ -139,8 +180,10 @@ FILE *fp = fopen(infile, "r");
         	//Do execl/execvp using 3.4,3.6
   
         	sprintf(arg1, "%d", fp);
+        	printf("%d fp is\n", fp);
 			sprintf(arg2, "%d", i);
-        	execl("palin", arg1-'0', arg2-'0', NULL);
+			printf("%d i is\n", i);
+        	execl("palin", arg1, arg2, NULL);
 
         }
         printf("process started \n");
