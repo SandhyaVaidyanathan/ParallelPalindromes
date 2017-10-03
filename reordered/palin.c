@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 	char* nopalinfile;
 	nopalinfile = "nopalin.out";
 	FILE *fpalin, *fnopalin;
-	int shmid, i,r;
+	int shmid, i,r1,r2;
 	sharedInfo *shinfo;
 	pid_t childpid = getpid();
 	char strFromFile[100][100];
@@ -34,6 +34,7 @@ int main(int argc, char const *argv[])
 	int max_writes = 5;
 	srand(time(0));
 	int n = 10;
+	time_t t = time(NULL);
 
 	key = 555;
 void printPalin( char* palinFilemane, char stringP[])
@@ -85,19 +86,19 @@ void isPalindrome(char str[])
     {
         if (str[first++] != str[last--])
         {
-        	r = rand() % 3;
-        	sleep(r);
+        	r1 = rand() % 3;
+        	sleep(r1);
             printPalin(nopalinfile,str);
-            r = rand() % 3;
-        	sleep(r);
+            r2 = rand() % 3;
+        	sleep(r2);
             return;
         }
     }
-    r = rand() % 3;
-    sleep(r);
+    r1 = rand() % 3;
+    sleep(r1);
     printNonPalin(palinfile, str);
-    r = rand() % 3;
-    sleep(r);
+    r2 = rand() % 3;
+    sleep(r2);
 
 }
 void process(const int i ) 
@@ -107,6 +108,7 @@ void process(const int i )
 	
 	do {
 		do {
+			fprintf(stderr, "The process is executing code to enter critical section at  %s \n",ctime(&t) );
 			shinfo->flag[i] = want_in; // Raise my flag
 			j = shinfo->turn; // Set local variable
 			// wait until its my turn
@@ -126,10 +128,12 @@ void process(const int i )
  shinfo->turn = i;
  //critical_section();
  /* critical section code starts here, sleep settings are within isPalindrome function*/
+ fprintf(stderr, "%s Entering critical section process %d\n", ctime(&t),i);
  isPalindrome(shinfo->mylist[shinfo->index]);  
  	shinfo->index++;
  
  // Exit section
+ 	 fprintf(stderr, "%s Exiting critical section process %d\n ",ctime(&t),i );
  j = (shinfo->turn + 1) % n;
  while (shinfo->flag[j] == idle)
  	j = (j + 1) % n;

@@ -31,10 +31,9 @@ int main(int argc, char const *argv[])
 	int itr=0;
 	int totalStr = 0;
 	char words[100][100];
-	char *arg1, *arg2, *arg3;
+	char *arg1, *arg2;
 	arg1 = (char*)malloc(40);
 	arg2 = (char*)malloc(40);
-	arg3 = (char*)malloc(40);
 
 	FILE *fp = fopen(infile, "r");
 
@@ -72,7 +71,7 @@ int main(int argc, char const *argv[])
         	itr++;
     		}
         totalStr = itr;
-        shinfo->totalNoOfStr = itr;
+
 		printf("outside\n");
     	for(itr = 0; itr < totalStr; itr++)
     		{ 
