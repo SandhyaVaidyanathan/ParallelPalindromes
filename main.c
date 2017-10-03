@@ -28,10 +28,7 @@ int main(int argc, char const *argv[])
 	sharedInfo *shinfo;
 	pid_t childpid[4];
 
-	char* mylist_orig[4] = { "hellloweowoe",
-						"jsdfhn",
-						"dfjnhdkjfnhdf",
-						"sfhgdj"};
+
 	char strFromFile[100][100];
 	int itr=0;
 	int totalStr = 0;
@@ -151,10 +148,10 @@ FILE *fp = fopen(infile, "r");
 		shinfo->flag[5]=4;
 		for (i = 0; i < 4; ++i)
 		{
-			//shinfo->mylist[i] = mylist_orig[i];
+		
 		shinfo->mylist[i] = strFromFile[i];
-			printf(" %x\n" , shinfo-> mylist[i]);
-			printf(" %s\n" , shinfo-> mylist[i]);
+			
+			printf(" The string is %s\n" , shinfo-> mylist[i]);
 		}
 	}
 

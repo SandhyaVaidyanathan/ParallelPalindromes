@@ -54,7 +54,7 @@ int main(int argc, char const *argv[])
 		for ( i = 0; i < 4; i++)
 		{
 			printf("%x\n" , shinfo->mylist[i]);
-			printf("%s\n" , shinfo->mylist[i]);
+			printf("%s child \n" , shinfo->mylist[i]);
 
 		}
 		// do plaindrome and write to file
