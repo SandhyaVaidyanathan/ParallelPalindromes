@@ -72,6 +72,7 @@ int main(int argc, char const *argv[])
         	itr++;
     		}
         totalStr = itr;
+        shinfo->totalNoOfStr = itr;
 		printf("outside\n");
     	for(itr = 0; itr < totalStr; itr++)
     		{ 
@@ -96,14 +97,18 @@ int main(int argc, char const *argv[])
         if (childpid[id-1]==0)
         {
         	//Do execl/execvp using 3.4,3.6
-  
-        	sprintf(arg1, "%d", fp);
-        	printf("%d fp is\n", fp);
-			sprintf(arg2, "%d", id);
-			printf("%d id is\n", id);
-			sprintf(arg1, "%d", shmid);
-        	execl("palin", arg1, arg2,arg3, NULL);
+  			sprintf(arg1, "%d", id);
+			printf("%d process is\n", id);
+        	//sprintf(arg2, "%d", fp);
+        	//printf("%d fp is\n", fp);
+        	int a;
+        	for ( a = 0; a < totalStr; ++a)
+        	{
+        		sprintf(arg2, "%d", a);
+        	printf("%d index is\n", a);
+        	}
 
+			execl("palin", arg1, arg2, NULL);
         }
 
         wait(NULL);

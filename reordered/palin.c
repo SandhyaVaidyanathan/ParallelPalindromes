@@ -127,7 +127,7 @@ void process(const int i )
  //critical_section();
  /* critical section code starts here, sleep settings are within isPalindrome function*/
  isPalindrome(shinfo->mylist[shinfo->index]);  
- shinfo->index++;
+ 	shinfo->index++;
  
  // Exit section
  j = (shinfo->turn + 1) % n;
@@ -160,11 +160,16 @@ void process(const int i )
 
 		for (i = 0; i < 5; i++ )
 		{
-		int fp= atoi(argv[0]);
-		int n= atoi(argv[1]);
-		int shmid= atoi(argv[2]);
-			process(n);
 
+			int n= atoi(argv[0]);
+			int xx= atoi(argv[1]);
+			process(n);
+	//Detaching shared memory
+	if (shmdt(shinfo) == -1) 
+	{
+        fprintf(stderr, "%s Error while detaching shared memory\n");
+        exit(1);
+    }
 		}
 
     }
