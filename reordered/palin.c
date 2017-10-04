@@ -34,9 +34,11 @@ int main(int argc, char const *argv[])
 	int max_writes = 5;
 	srand(time(0));
 	int n = 10;
-	time_t t = time(NULL);
+	//int seconds = 60;
 
 	key = 555;
+
+
 void printPalin( char* palinFilemane, char stringP[])
 {
     fpalin = fopen(palinFilemane,"a");
@@ -96,7 +98,8 @@ void isPalindrome(char str[])
     }
     r1 = rand() % 3;
     sleep(r1);
-    printNonPalin(palinfile, str);
+    if(sizeof(str) > 0)
+    	printNonPalin(palinfile, str);
     r2 = rand() % 3;
     sleep(r2);
 
@@ -105,6 +108,7 @@ void process(const int i )
 {
 	
 	int j;
+		time_t t = time(0);
 	
 	do {
 		do {
@@ -171,11 +175,20 @@ void process(const int i )
 	//Detaching shared memory
 	if (shmdt(shinfo) == -1) 
 	{
-        fprintf(stderr, "%s Error while detaching shared memory\n");
+        fprintf(stderr, " Error while detaching shared memory\n");
         exit(1);
     }
+    if ((shmctl(shmid, IPC_RMID, NULL) == -1) && !0)
+	{
+		fprintf(stderr, " Error while removing shared memory\n");
+        exit(1);
+	}
+	  kill(getpid(), SIGKILL);
+
+		
 		}
 
     }
+
 	return 0;
 }

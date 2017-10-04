@@ -34,6 +34,29 @@ int main(int argc, char const *argv[])
 	char *arg1, *arg2;
 	arg1 = (char*)malloc(40);
 	arg2 = (char*)malloc(40);
+	int seconds = 60;
+void interruptHandler(int SIG){
+  signal(SIGQUIT, SIG_IGN);
+  signal(SIGINT, SIG_IGN);
+
+  if(SIG == SIGINT)
+   {
+    fprintf(stderr, "\nCTRL-C encoutered, killing processes\n");
+  	}
+
+  if(SIG == SIGALRM) 
+  {
+    fprintf(stderr, "Master has timed out. killing processes\n");
+  }
+kill(-getpgrp(), SIGQUIT);
+}
+
+	signal(SIGINT, interruptHandler); 
+	signal(SIGALRM, interruptHandler);
+	alarm(seconds);
+
+
+
 
 	FILE *fp = fopen(infile, "r");
 
@@ -98,19 +121,20 @@ int main(int argc, char const *argv[])
         	//Do execl/execvp using 3.4,3.6
   			sprintf(arg1, "%d", id);
 			printf("%d process is\n", id);
-        	//sprintf(arg2, "%d", fp);
-        	//printf("%d fp is\n", fp);
         	int a;
         	for ( a = 0; a < totalStr; ++a)
         	{
         		sprintf(arg2, "%d", a);
-        	printf("%d index is\n", a);
-        	}
+           	}
+			
+			
+				execl("palin", arg1, arg2, NULL);
 
-			execl("palin", arg1, arg2, NULL);
         }
 
         wait(NULL);
+
+
 
 	}	
 	return 0;
