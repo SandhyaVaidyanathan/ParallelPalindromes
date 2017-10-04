@@ -1,0 +1,25 @@
+Project 2
+Sandhya Vaidyanathan
+github - https://github.com/SandhyaVaidyanathan/ParallelPalindromes
+
+main.c
+This file forks off child process , and the control is given to a new program palin.c
+
+palin.c
+Using Peterson's algorithm, a set of input strings are checked if they are palindrome or not.
+Depending on the result they are appended in two files palin.out and nopalin.out
+
+Input.txt
+It is a sample set of data with 50 strings
+
+shm.h
+This contains the structure of the shared memory segment
+
+Usage Example:
+./main  -f "Input.txt" -n 5 -s 30 -w 3
+
+-f is the input file name
+-n no. of processes
+-s seconds for the alarm
+-w max_write value
+
