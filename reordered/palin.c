@@ -29,16 +29,37 @@ int main(int argc, char const *argv[])
 	pid_t childpid = getpid();
 	char strFromFile[100][100];
 	int itr=0;
-	int totalStr = 0;
+	int stringCount = 0;
 	char words[100][100];
 	int max_writes = 5;
 	srand(time(0));
 	int n = 10;
-	//int seconds = 60;
+	int option =0;
+	int p =0; //process number
+	int pos =0;
+	int seconds = 60;
 
-	key = 555;
 
+/*while ((option = getopt(argc, argv,"p:i:wt:")) != -1) {
+  switch (option) {
 
+   case 'p' : p = atoi(optarg); //process number
+           break;
+   case 'i' : pos = atoi(optarg); // string index
+           break;
+    case 'w':
+    		max_writes = atoi(optarg); 
+    		break;
+    case 't':
+    	stringCount = atoi(optarg); //total string count
+    	break;
+   default:
+   //displaying error message as per the required format with executable name
+           fprintf(stderr, "%s: ",argv[0]);
+           perror(" Error: Invalid option");
+           abort();
+ }
+}*/
 void printPalin( char* palinFilemane, char stringP[])
 {
     fpalin = fopen(palinFilemane,"a");
@@ -76,38 +97,40 @@ void printNonPalin( char* nopalinFilename, char stringN[])
    	fclose(fnopalin);
 }
 
-void isPalindrome(char str[])
-{
+	void isPalindrome(char str[])
+	{
 
-    // Start from leftmost and rightmost corners of str
-    int first = 0;
-    int last = strlen(str) - 1;
- 
-    // Keep comparing characters while they are same
-    while (last > first)
-    {
-        if (str[first++] != str[last--])
-        {
-        	r1 = rand() % 3;
-        	sleep(r1);
-            printPalin(nopalinfile,str);
-            r2 = rand() % 3;
-        	sleep(r2);
-            return;
-        }
-    }
-    r1 = rand() % 3;
-    sleep(r1);
-    if(sizeof(str) > 0)
-    	printNonPalin(palinfile, str);
-    r2 = rand() % 3;
-    sleep(r2);
+	    // Start from leftmost and rightmost corners of str
+	    int first = 0;
+	    int last = strlen(str) - 1;
+	 
+	    // Keep comparing characters while they are same
+	    while (last > first)
+	    {
+	        if (str[first++] != str[last--])
+	        {
+	        	r1 = rand() % 3;
+	        	sleep(r1);
+	            printPalin(nopalinfile,str);
+	            r2 = rand() % 3;
+	        	sleep(r2);
+	            return;
+	        }
+	    }
+	    r1 = rand() % 3;
+	    sleep(r1);
+	    if(strlen(str) > 0)
+	    {
+	    	printNonPalin(palinfile, str);
+	    }
+	    r2 = rand() % 3;
+	    sleep(r2);
 
-}
+	}
 void process(const int i ) 
 {
 	
-	int j;
+	int j,k=0;
 		time_t t = time(0);
 	
 	do {
@@ -147,9 +170,12 @@ void process(const int i )
  shinfo->flag[i] = idle;
  
  //remainder_section();
+ //k++;
  } while ( 1 );
  }
 
+
+key = 555;
 	shmid = shmget(key, 1500*sizeof(shinfo), PERM | IPC_EXCL);
 	if ((shmid == -1) && (errno != EEXIST)) 
 	{
@@ -172,22 +198,24 @@ void process(const int i )
 			int n= atoi(argv[0]);
 			int xx= atoi(argv[1]);
 			process(n);
-	//Detaching shared memory
-	if (shmdt(shinfo) == -1) 
-	{
-        fprintf(stderr, " Error while detaching shared memory\n");
-        exit(1);
-    }
-    if ((shmctl(shmid, IPC_RMID, NULL) == -1) && !0)
+
+ /*  if ((shmctl(shmid, IPC_RMID, NULL) == -1) && !0)
 	{
 		fprintf(stderr, " Error while removing shared memory\n");
         exit(1);
 	}
-	  kill(getpid(), SIGKILL);
+	  kill(getpid(), SIGKILL); */
 
 		
 		}
 
+    }
+
+    	//Detaching shared memory
+	if (shmdt(shinfo) == -1) 
+	{
+        fprintf(stderr, " Error while detaching shared memory\n");
+        exit(1);
     }
 
 	return 0;

@@ -16,6 +16,7 @@
 int main(int argc, char const *argv[])
 {
 	int noOfChildProcess = 10; //no. of child processes
+	int option = 0;
 	key_t key;
 	char* infile;
 	infile = "Input.txt";
@@ -31,11 +32,46 @@ int main(int argc, char const *argv[])
 	int itr=0;
 	int totalStr = 0;
 	char words[100][100];
-	char *arg1, *arg2;
+	char *arg1, *arg2, *arg3, *arg4;
 	arg1 = (char*)malloc(40);
 	arg2 = (char*)malloc(40);
+	arg3 = (char*)malloc(40);
+	arg4 = (char*)malloc(40);
 	int seconds = 60;
-void interruptHandler(int SIG){
+	int max_writes=5;
+
+/*if (argc < 2){ // check for valid number of command-line arguments 
+  fprintf(stderr, " %s: Error : Try Executable -h for help \n",argv[0]);
+  return 1;
+}
+
+
+	while ((option = getopt(argc, argv,"hf:s:n:w")) != -1) {
+  switch (option) {
+   case 'h' :
+           printf("Usage executable -f {filename} -n {no . of processes} -s {no. of seconds} -w{max_writes}\n");
+           return 1;
+           break;
+   case 'n' : noOfChildProcess = atoi(optarg);
+           break;
+   case 's' : seconds = atoi(optarg);
+           break;
+    case 'f': 
+    		infile = optarg;
+    		break;
+    case 'w':
+    		max_writes = atoi(optarg);
+    		break;
+   default:
+   //displaying error message as per the required format with executable name
+           fprintf(stderr, "%s: ",argv[0]);
+           perror(" Error: Invalid option");
+           abort();
+ }
+} */
+
+void interruptHandler(int SIG)
+{
   signal(SIGQUIT, SIG_IGN);
   signal(SIGINT, SIG_IGN);
 
@@ -51,18 +87,12 @@ void interruptHandler(int SIG){
 kill(-getpgrp(), SIGQUIT);
 }
 
-	signal(SIGINT, interruptHandler); 
-	signal(SIGALRM, interruptHandler);
-	alarm(seconds);
-
-
-
 
 	FILE *fp = fopen(infile, "r");
 
 	key = 555;
 	//Create shared memory segment (Ref 15.6)
-	shmid = shmget(key, 2200*sizeof(shinfo), PERM |IPC_CREAT |IPC_EXCL);
+	shmid = shmget(key, 1500*sizeof(shinfo), PERM |IPC_CREAT |IPC_EXCL);
 	if ((shmid == -1) && (errno != EEXIST)) /* real error */
 	{
 		perror("Unable to create shared memory");
@@ -87,7 +117,7 @@ kill(-getpgrp(), SIGQUIT);
     	else
     	{
     
-    		while(fgets(strFromFile[itr], 100, fp))
+    		while(fgets(strFromFile[itr], 100, fp)!=NULL)
     		{
         	//remove \n from gets
         	strFromFile[itr][strlen(strFromFile[itr]) - 1] = '\0';
@@ -95,7 +125,6 @@ kill(-getpgrp(), SIGQUIT);
     		}
         totalStr = itr;
 
-		printf("outside\n");
     	for(itr = 0; itr < totalStr; itr++)
     		{ 
         	strcpy(shinfo->mylist[itr],strFromFile[itr]);
@@ -103,6 +132,10 @@ kill(-getpgrp(), SIGQUIT);
     		itr = 0;
     	}
     	//Interrupts should be handled here
+    signal(SIGINT, interruptHandler); 
+	signal(SIGALRM, interruptHandler);
+	alarm(seconds);
+
 
     	//call child process -palin
     	int id;
@@ -122,19 +155,21 @@ kill(-getpgrp(), SIGQUIT);
   			sprintf(arg1, "%d", id);
 			printf("%d process is\n", id);
         	int a;
-        	for ( a = 0; a < totalStr; ++a)
-        	{
-        		sprintf(arg2, "%d", a);
-           	}
-			
-			
-				execl("palin", arg1, arg2, NULL);
-
+          for(a=0;a<totalStr;a++)
+          {
+            sprintf(arg2, "%d", a);
+          }
+       /* 		sprintf(arg2, "%d", (id-1)*max_writes);
+        		sprintf(arg3, "%d", max_writes);
+        		sprintf(arg4, "%d", totalStr);
+           							
+				execl("palin", arg1, arg2,arg3,arg4, NULL); */
+  execl("palin", arg1, arg2, NULL);
         }
 
         wait(NULL);
 
-
+        fclose(fp);
 
 	}	
 	return 0;
